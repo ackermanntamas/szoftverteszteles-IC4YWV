@@ -6,23 +6,12 @@ using StudentPerformanceApp.Services;
 
 namespace StudentPerformanceApp.Tests
 {
-    /// <summary>
-    /// Egységtesztek a StudentPerformanceEvaluator és ScholarshipEvaluator osztályokhoz.
-    /// A tesztesetek ekvivalencia-particionálás és határérték-elemzés alapján készültek.
-    ///
-    /// Ekvivalencia-osztályok (CalculateWeightedAverage):
-    ///   - Érvényes: jegy 1..5, kredit > 0, nem üres és nem null lista
-    ///   - Érvénytelen jegy: < 1 vagy > 5
-    ///   - Érvénytelen kredit: <= 0
-    ///   - Érvénytelen lista: null vagy üres
-    ///
-    /// Ekvivalencia-osztályok (IsEligible):
-    ///   - Jogosult: átlag >= 4.0 ÉS bukott tárgyak = 0
-    ///   - Nem jogosult: átlag < 4.0 VAGY van bukott tárgy
-    ///   - Érvénytelen átlag: < 1.0 vagy > 5.0
-    ///   - Érvénytelen bukásszám: < 0
-    /// </summary>
-    [TestClass]
+    
+    // egységtesztek a tanulmányi eredmények osztályaihoz
+    // tesztelési technikák: ekvivalencia-particionálás és határérték-elemzés
+    
+    
+[TestClass]
     public class IC4YWV_StudentPerformanceTests
     {
         private StudentPerformanceEvaluator _evaluator = null!;
@@ -34,15 +23,13 @@ namespace StudentPerformanceApp.Tests
             _evaluator = new StudentPerformanceEvaluator();
             _scholarship = new ScholarshipEvaluator();
         }
-
-        // ====================================================================
+       
         // CalculateWeightedAverage tesztek
-        // ====================================================================
-
+       
         [TestMethod]
         public void CalculateWeightedAverage_EgyErvenyesRekord_VisszaadjaAJegyet()
         {
-            // Ekvivalencia-particionálás: érvényes bemenet (1 elem)
+            // ekvivalencia-particionálás: érvényes bemenet (1 elem)
             var records = new List<CourseRecord>
             {
                 new CourseRecord { Grade = 4, Credit = 5 }
@@ -56,9 +43,8 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_TobbErvenyesRekord_HelyesSulyozottAtlag()
         {
-            // Ekvivalencia-particionálás: érvényes bemenet (több elem)
-            // Megj.: az implementáció egész osztást használ (Grade és Credit is int),
-            // ezért a számokat úgy választottam, hogy az eredmény egész szám legyen.
+            // ekvivalencia-particionálás: érvényes bemenet (több elem)
+            // az implementáció egész osztást használ (Grade és Credit is int) ezért a számokat úgy választottam, hogy az eredmény egész szám legyen
             // (5*1 + 3*1 + 4*2) / (1+1+2) = (5+3+8)/4 = 16/4 = 4
             var records = new List<CourseRecord>
             {
@@ -75,7 +61,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_AlsoHatarJegy_Elfogadott()
         {
-            // Határérték-elemzés: jegy alsó határa = 1 (érvényes)
+            // határérték-elemzés: jegy alsó határa = 1 (érvényes)
             var records = new List<CourseRecord>
             {
                 new CourseRecord { Grade = 1, Credit = 3 }
@@ -89,7 +75,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_FelsoHatarJegy_Elfogadott()
         {
-            // Határérték-elemzés: jegy felső határa = 5 (érvényes)
+            // határérték-elemzés: jegy felső határa = 5 (érvényes)
             var records = new List<CourseRecord>
             {
                 new CourseRecord { Grade = 5, Credit = 3 }
@@ -103,7 +89,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_NullLista_KivetelDob()
         {
-            // Ekvivalencia-particionálás: érvénytelen bemenet (null)
+            // ekvivalencia-particionálás: érvénytelen bemenet (null)
             Assert.Throws<ArgumentNullException>(() =>
                 _evaluator.CalculateWeightedAverage(null!));
         }
@@ -111,7 +97,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_UresLista_KivetelDob()
         {
-            // Ekvivalencia-particionálás: érvénytelen bemenet (üres)
+            // ekvivalencia-particionálás: érvénytelen bemenet (üres)
             Assert.Throws<ArgumentException>(() =>
                 _evaluator.CalculateWeightedAverage(new List<CourseRecord>()));
         }
@@ -119,7 +105,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_JegyAlsoHataronKivul_KivetelDob()
         {
-            // Határérték-elemzés: jegy = 0 (érvénytelen, közvetlenül a határ alatt)
+            // határérték-elemzés: jegy = 0 (érvénytelen, közvetlenül a határ alatt)
             var records = new List<CourseRecord>
             {
                 new CourseRecord { Grade = 0, Credit = 3 }
@@ -132,7 +118,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_JegyFelsoHataronKivul_KivetelDob()
         {
-            // Határérték-elemzés: jegy = 6 (érvénytelen, közvetlenül a határ felett)
+            // határérték-elemzés: jegy = 6 (érvénytelen, közvetlenül a határ felett)
             var records = new List<CourseRecord>
             {
                 new CourseRecord { Grade = 6, Credit = 3 }
@@ -145,7 +131,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_KreditNulla_KivetelDob()
         {
-            // Határérték-elemzés: kredit = 0 (érvénytelen határ)
+            // határérték-elemzés: kredit = 0 (érvénytelen határ)
             var records = new List<CourseRecord>
             {
                 new CourseRecord { Grade = 4, Credit = 0 }
@@ -158,7 +144,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void CalculateWeightedAverage_KreditNegativ_KivetelDob()
         {
-            // Ekvivalencia-particionálás: érvénytelen kredit (negatív)
+            // ekvivalencia-particionálás: érvénytelen kredit (negatív)
             var records = new List<CourseRecord>
             {
                 new CourseRecord { Grade = 4, Credit = -2 }
@@ -168,14 +154,12 @@ namespace StudentPerformanceApp.Tests
                 _evaluator.CalculateWeightedAverage(records));
         }
 
-        // ====================================================================
-        // DetermineClassification tesztek
-        // ====================================================================
-
+        // determineClassification tesztek
+        
         [TestMethod]
         public void DetermineClassification_AtlagKettoHataron_Elegtelen()
         {
-            // Határérték-elemzés: average = 2.0 (Elégtelen felső határa)
+            // határérték-elemzés: average = 2.0 (Elégtelen felső határa)
             string result = _evaluator.DetermineClassification(2.0);
             Assert.AreEqual("Elégtelen", result);
         }
@@ -183,7 +167,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void DetermineClassification_AtlagHaromEsFelHataron_Kozepes()
         {
-            // Határérték-elemzés: average = 3.5 (Közepes felső határa)
+            // határérték-elemzés: average = 3.5 (közepes felső határa)
             string result = _evaluator.DetermineClassification(3.5);
             Assert.AreEqual("Közepes", result);
         }
@@ -191,7 +175,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void DetermineClassification_AtlagNegyEsFelHataron_Jo()
         {
-            // Határérték-elemzés: average = 4.5 (Jó felső határa)
+            // határérték-elemzés: average = 4.5 (jó felső határa)
             string result = _evaluator.DetermineClassification(4.5);
             Assert.AreEqual("Jó", result);
         }
@@ -199,7 +183,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void DetermineClassification_AtlagNegyEsFelFelett_Kivalo()
         {
-            // Határérték-elemzés: average = 4.51 (közvetlenül a Jó határ felett)
+            // határérték-elemzés: average = 4.51 (közvetlenül a jó határ felett)
             string result = _evaluator.DetermineClassification(4.51);
             Assert.AreEqual("Kiváló", result);
         }
@@ -207,19 +191,17 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void DetermineClassification_AtlagOt_Kivalo()
         {
-            // Ekvivalencia-particionálás: legmagasabb értelmes átlag
+            // ekvivalencia-particionálás: legmagasabb értelmes átlag
             string result = _evaluator.DetermineClassification(5.0);
             Assert.AreEqual("Kiváló", result);
         }
 
-        // ====================================================================
-        // ScholarshipEvaluator.IsEligible tesztek
-        // ====================================================================
-
+         // ScholarshipEvaluator.IsEligible tesztek
+        
         [TestMethod]
         public void IsEligible_AtlagPontosanNegy_NincsBukas_Jogosult()
         {
-            // Határérték-elemzés: átlag = 4.0 (jogosultság alsó határa)
+            // határérték-elemzés: átlag = 4.0 (jogosultság alsó határa)
             bool result = _scholarship.IsEligible(4.0, 0);
             Assert.IsTrue(result);
         }
@@ -227,7 +209,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void IsEligible_AtlagKozvetlenulNegyAlatt_NemJogosult()
         {
-            // Határérték-elemzés: átlag = 3.99 (közvetlenül a határ alatt)
+            // határérték-elemzés: átlag = 3.99 (közvetlenül a határ alatt)
             bool result = _scholarship.IsEligible(3.99, 0);
             Assert.IsFalse(result);
         }
@@ -235,7 +217,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void IsEligible_MagasAtlagDeBukottTargy_NemJogosult()
         {
-            // Ekvivalencia-particionálás: átlag jó, de van bukás
+            // ekvivalencia-particionálás: átlag jó, de van bukás
             bool result = _scholarship.IsEligible(4.8, 1);
             Assert.IsFalse(result);
         }
@@ -243,7 +225,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void IsEligible_AtlagEgyAlatt_KivetelDob()
         {
-            // Határérték-elemzés: átlag = 0.99 (érvénytelen, alsó határ alatt)
+            // határérték-elemzés: átlag = 0.99 (érvénytelen, alsó határ alatt)
             Assert.Throws<ArgumentException>(() =>
                 _scholarship.IsEligible(0.99, 0));
         }
@@ -251,7 +233,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void IsEligible_AtlagOtFelett_KivetelDob()
         {
-            // Határérték-elemzés: átlag = 5.01 (érvénytelen, felső határ felett)
+            // határérték-elemzés: átlag = 5.01 (érvénytelen, felső határ felett)
             Assert.Throws<ArgumentException>(() =>
                 _scholarship.IsEligible(5.01, 0));
         }
@@ -259,7 +241,7 @@ namespace StudentPerformanceApp.Tests
         [TestMethod]
         public void IsEligible_NegativBukasszam_KivetelDob()
         {
-            // Ekvivalencia-particionálás: érvénytelen bukásszám
+            // ekvivalencia-particionálás: érvénytelen bukásszám
             Assert.Throws<ArgumentException>(() =>
                 _scholarship.IsEligible(4.5, -1));
         }
